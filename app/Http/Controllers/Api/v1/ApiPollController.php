@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Poll;
+use App\Models\PollVote;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 
 class ApiPollController extends Controller
@@ -165,5 +168,86 @@ class ApiPollController extends Controller
         $poll->delete();
 
         return response()->json(['message' => 'success'], 200);
+    }
+
+    /**
+     * Vote in the specified poll.
+     */
+    public function vote(Request $request, int $id)
+    {
+        // check poll exists and is active
+
+        $poll = Poll::with('options')->find($id);
+
+        if (!$poll) {
+            return response()->json(['message' => 'Poll not found.'], 404);
+        } else if ($poll->is_draft) {
+            return response()->json(['message' => 'Poll hasn\'t started.'], 409);
+        } else if ($poll->ends_at && Date::parse($poll->ends_at)->lessThanOrEqualTo(now())) {
+            return response()->json(['message' => 'Poll has ended already.'], 418);
+        }
+
+        // check user exists
+
+        $user = User::find($request->user()->id);
+
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized.'], 403);
+        }
+
+        // check user can vote
+        
+        $existingVotes = $poll->votes()->where('user_id', $user->id)->get();
+
+        if (count($existingVotes) > 0 && !$poll->allow_vote_change) {
+            return response()->json(['message' => 'Cannot vote again.'], 422);
+        }
+
+        // check votes validity
+
+        $validated = $request->validate([
+            'votes' => 'required|array',
+            'votes.*.poll_id' => 'required|int|exists:polls,id',
+            'votes.*.id' => 'required|integer|exists:poll_options,id'
+        ]);
+
+        $votes = $validated['votes'];
+
+        // check votes belong to poll
+
+        foreach($votes as $vote) {
+            if ($vote['poll_id'] !== $poll->id) {
+                return response()->json(['message' => 'Invalid option.'], 422);
+            }
+        }
+
+        // check votes unicity
+
+        if (count($votes) > 1 && $poll->allow_multiple_choices) {
+            return response()->json(['message' => 'Only one vote allowed.'], 409);
+        }
+
+        // delete all existing votes by user for poll
+
+        $poll->votes()->where('user_id', $user->id)->delete();
+
+        // recreate votes
+
+        foreach($votes as $vote) {
+            $poll->votes()->create([
+                'user_id' => $user->id,
+                'poll_option_id' => $vote['id']
+            ]);
+        }
+
+        $poll->load(['options' => function ($query) {
+            $query->withCount('votes');
+        }]);
+
+        if ($user->id !== $poll->user_id && !$poll->results_public) {
+            $poll->options->each->makeHidden('votes_count');
+        }
+
+        return $poll;
     }
 }
