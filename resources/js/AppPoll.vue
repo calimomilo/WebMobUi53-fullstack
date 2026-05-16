@@ -11,7 +11,6 @@ import PollDetailsPage from './pages/PollDetailsPage.vue';
   const props = defineProps({
     polls: { type: Array, default: () => [] },
     loginUrl: { type: String, default: null },
-    username: { type: String, default: null },
   });
 
   const { setPolls } = usePollStore();
@@ -21,14 +20,17 @@ import PollDetailsPage from './pages/PollDetailsPage.vue';
     { hash: '#dashboard', component: PollDashboardPage },
     { hash: '#create', component: CreatePollPage },
     { hash: '#edit', component: EditPollPage },
-    { hash: '#vote', component: PollDetailsPage }
   ]
 
   const { currentComponent, currentHashs, currentRoute, navigateTo } = useHashRoute(routes);
+
+  function navigateToDetail(pollToken) {
+    window.location.assign(`/polls/vote/${pollToken}`);
+  }
 
 </script>
 
 <template>
   <component :is="currentComponent" :pollId="currentHashs[1]" 
-  @godashboard="navigateTo('#dashboard')" @editpoll="pollId => navigateTo(`#edit/${pollId}`)" @polldetails="pollToken => navigateTo(`#vote/${pollToken}`)"></component>
+  @godashboard="navigateTo('#dashboard')" @editpoll="pollId => navigateTo(`#edit/${pollId}`)" @polldetails="pollToken => navigateToDetail(pollToken)"></component>
 </template>
