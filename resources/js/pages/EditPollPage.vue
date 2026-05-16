@@ -8,9 +8,13 @@ import PollForm from '../components/PollForm.vue';
         pollId: { type: Number, default: null }
     })
 
-    const emit = defineEmits('formsubmitted');
-    const { polls, findPoll } = usePollStore();
+    const emit = defineEmits('godashboard');
+    const { polls } = usePollStore();
     const poll = polls.value.find(p => p.id == props.pollId);
+    
+    if(!poll) {
+        emit('godashboard');
+    }
 
 </script>
 
@@ -20,5 +24,5 @@ import PollForm from '../components/PollForm.vue';
         <h1 class="text-2xl font-bold dark:text-white">Modifier le sondage</h1>
     </div>
 
-  <PollForm :poll="poll" @formsubmitted="(poll) => emit('formsubmitted', poll)"/>
+  <PollForm :poll="poll" @godashboard="emit('godashboard')"/>
 </template>

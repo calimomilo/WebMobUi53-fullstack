@@ -4,7 +4,7 @@
 import { useHashRoute } from '../composables/useHashRoute';
 import PollForm from '../components/PollForm.vue';
 
-  const emit = defineEmits('formsubmitted');
+  const emit = defineEmits('godashboard');
 
 </script>
 
@@ -14,5 +14,5 @@ import PollForm from '../components/PollForm.vue';
         <h1 class="text-2xl font-bold dark:text-white">Nouveau sondage</h1>
     </div>
 
-  <PollForm @formsubmitted="(poll) => emit('formsubmitted', poll)"/>
+  <PollForm @godashboard="emit('godashboard')"/>
 </template>

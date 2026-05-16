@@ -11,7 +11,7 @@ import { useHashRoute } from '../composables/useHashRoute';
   const editMode = props.poll !== null;
   const pollDisabled = props.poll?.is_draft === 0;
   const { fetchApi } = useFetchApi();
-  const emit = defineEmits('formsubmitted');
+  const emit = defineEmits('godashboard');
 
   console.log(props.poll)
 
@@ -127,7 +127,7 @@ import { useHashRoute } from '../composables/useHashRoute';
 
         try {
             const poll = await fetchApi({ url: url, method: method, data: form.value });
-            emit('formsubmitted', poll);
+            emit('godashboard');
         } catch (error) {
             console.error(error);
         } finally {
@@ -151,7 +151,8 @@ import { useHashRoute } from '../composables/useHashRoute';
 
 <template>
     <div v-if="pollDisabled" class="w-full text-center py-3 my-3 rounded-md bg-red-200 text-red-900 dark:bg-red-900 dark:text-white">
-        <p>Ce formulaire a été publié et ne peut plus être modifié.</p>
+        <p>Ce sondage a été publié et ne peut plus être modifié.</p>
+        <a :href="`#vote/${poll.secret_token}`" class="italic hover:underline">Voir le sondage</a>
     </div>
 
     <article class="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6">

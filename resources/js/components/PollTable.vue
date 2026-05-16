@@ -2,6 +2,7 @@
   import { usePollStore } from '@/stores/usePollStore';
 import { onMounted } from 'vue';
 import PollStatusBadge from './PollStatusBadge.vue';
+import { useDateFormatting } from '../composables/useDateFormatting';
 
   const { polls, deletePoll } = usePollStore();
 
@@ -10,17 +11,8 @@ import PollStatusBadge from './PollStatusBadge.vue';
     await deletePoll(id);
   }
 
-  const emit = defineEmits('editpoll');
-
-  const dateLocale = 'fr-CH';
-  const dateOptions = {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-  };
+  const emit = defineEmits('editpoll', 'polldetails');
+  const { toFormattedDate } = useDateFormatting();
 
   onMounted(() => {
     const { updatePolls } = usePollStore();
@@ -48,7 +40,7 @@ import PollStatusBadge from './PollStatusBadge.vue';
         <td class="border px-3 py-2">
           <button class="bg-red-500" @click="delPoll(poll.id)">🗑️</button>
           <button v-if="poll.is_draft" class="bg-slate-50 border" @click="emit('editpoll', poll.id)">✏️</button>
-          <button v-else class="bg-slate-50 border" @click="emit('polldetails', poll.id)">📊</button>
+          <button v-else class="bg-slate-50 border" @click="emit('polldetails', poll.secret_token)">📊</button>
         </td>
         <td class="border px-3 py-2">{{ poll.id }}</td>
         <td class="border px-3 py-2">{{ poll.title || '-' }}</td>
@@ -56,8 +48,8 @@ import PollStatusBadge from './PollStatusBadge.vue';
         <td class="border px-3 py-2">
           <PollStatusBadge :poll="poll"></PollStatusBadge>
         </td>
-        <td class="border px-3 py-2">{{ poll.started_at? new Date(poll.started_at).toLocaleString(dateLocale, dateOptions) : '-' }}</td>
-        <td class="border px-3 py-2">{{ poll.ends_at? new Date(poll.ends_at).toLocaleString(dateLocale, dateOptions) : '-' }}</td>
+        <td class="border px-3 py-2">{{ toFormattedDate(poll.started_at) }}</td>
+        <td class="border px-3 py-2">{{ toFormattedDate(poll.ends_at) }}</td>
       </tr>
     </tbody>
   </table>
