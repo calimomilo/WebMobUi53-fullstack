@@ -1,11 +1,14 @@
 <script setup>
+import { ref } from 'vue';
+
 const props = defineProps({
     poll: { type: Object, default: null }
   });
 
-  const pollStatus = props.poll.is_draft
+  const pollStatus = ref();
+  pollStatus.value = props.poll.is_draft
   ? 'Brouillon'
-  : new Date(props.poll.ends_at) > Date.now()
+  : Date.parse(props.poll.ends_at) < Date.now()
   ? 'Terminé'
   : 'En cours';
 

@@ -116,7 +116,7 @@ class ApiPollController extends Controller
             'results_public' => $validated['results_public'],
             'duration' => $validated['duration'],
             'started_at' => $publish ? now() : null,
-            'ends_at' => $validated['ends_at'] ?? $publish && $validated['duration'] ? now()->addSeconds($validated['duration']) : null, // si une date est définie prend celle-là, sinon calcule en fonction de la durée si le sondage est publié
+            'ends_at' => $validated['ends_at'] ?? ($publish && $validated['duration'] ? now()->addSeconds($validated['duration']) : null), // si une date est définie prend celle-là, sinon calcule en fonction de la durée si le sondage est publié
         ]);
 
         $poll->options()->delete();        

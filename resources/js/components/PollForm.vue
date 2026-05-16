@@ -50,7 +50,7 @@ import { useHashRoute } from '../composables/useHashRoute';
   const loading = ref(false);
 
   const end_date = defineModel('date', {
-    get: () => form.value.ends_at ? form.value.ends_at.split('T')[0] : null,
+    get: () => form.value.ends_at ? form.value.ends_at.split(/[\s,T]/)[0] : null,
     set: (val) => {
         const dateTime = `${val}T${end_time.value ?? '00:00'}`;
         form.value.ends_at = dateTime;
@@ -59,7 +59,7 @@ import { useHashRoute } from '../composables/useHashRoute';
   });
 
   const end_time = defineModel('time', {
-    get: () => form.value.ends_at ? form.value.ends_at.split('T')[1] : null,
+    get: () => form.value.ends_at ? form.value.ends_at.split(/[\s,T]/)[1] : null,
     set: (val) => {
         const date = end_date.value ?? new Date.now().toDateString();
         const dateTime = date + 'T' + val;
@@ -95,6 +95,10 @@ import { useHashRoute } from '../composables/useHashRoute';
 
     if (form.value.options.length < 2) {
         errors.value.options = 'Il faut au moins 2 options.';
+    }
+
+    if (Date.parse(form.value.ends_at) < Date.now()) {
+        errors.value.ends_at = 'La date de fin doit être dans le futur.';
     }
 
     let optionErrorFound = false;
@@ -221,11 +225,11 @@ import { useHashRoute } from '../composables/useHashRoute';
                 </label>
                 <input id="ends_at_date" type="date" name="ends_at_date" v-model="end_date" :disabled="pollDisabled"
                     placeholder="Quelle est votre question ?"
-                    class="w-full px-3 py-2 border rounded-md bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:border-transparent border-gray-300 dark:border-gray-600 focus:ring-teal-500 dark:focus:ring-purple-500"
+                    class="w-[170px] me-2 px-3 py-2 border rounded-md bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:border-transparent border-gray-300 dark:border-gray-600 focus:ring-teal-500 dark:focus:ring-purple-500"
                     :class="{'border-red-500 focus:ring-red-500' : errors.ends_at}">
                 <input id="ends_at_time" type="time" name="ends_at_time" v-model="end_time" :disabled="pollDisabled"
                     placeholder="Quelle est votre question ?"
-                    class="w-full px-3 py-2 border rounded-md bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:border-transparent border-gray-300 dark:border-gray-600 focus:ring-teal-500 dark:focus:ring-purple-500"
+                    class="w-[70px] px-3 py-2 border rounded-md bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:border-transparent border-gray-300 dark:border-gray-600 focus:ring-teal-500 dark:focus:ring-purple-500"
                     :class="{'border-red-500 focus:ring-red-500' : errors.ends_at}">
                     <p v-if="errors.ends_at" class="mt-1 text-sm text-red-600 dark:text-red-400">{{ errors.ends_at }}</p>
             </div>
