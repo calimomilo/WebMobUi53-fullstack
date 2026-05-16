@@ -28,7 +28,7 @@ class PollVoteController extends Controller
             $votedIds = PollVote::where('poll_id', $poll->id)->where('user_id', $user->id)->pluck('poll_option_id')->toArray();
         }
 
-        if(!$isOwner || !$poll->results_public) {
+        if(!$isOwner && !$poll->results_public) {
             $poll->options->each->makeHidden('votes_count');
         }
 

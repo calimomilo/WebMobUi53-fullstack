@@ -38,9 +38,9 @@ import { useDateFormatting } from '../composables/useDateFormatting';
     <tbody>
       <tr v-for="poll in polls" :key="poll.id">
         <td class="border px-3 py-2">
-          <button class="bg-red-500" @click="delPoll(poll.id)">🗑️</button>
-          <button v-if="poll.is_draft" class="bg-slate-50 border" @click="emit('editpoll', poll.id)">✏️</button>
-          <button v-else class="bg-slate-50 border" @click="emit('polldetails', poll.secret_token)">📊</button>
+          <button class="bg-red-600 dark:bg-red-800 text-white hover:bg-red-700 dark:hover:bg-red-900" @click="delPoll(poll.id)">🗑️</button>
+          <button v-if="poll.is_draft" class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600" @click="emit('editpoll', poll.id)">✏️</button>
+          <button v-else class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200  hover:bg-gray-300 dark:hover:bg-gray-600" @click="emit('polldetails', poll.secret_token)">📊</button>
         </td>
         <td class="border px-3 py-2">{{ poll.id }}</td>
         <td class="border px-3 py-2">{{ poll.title || '-' }}</td>
