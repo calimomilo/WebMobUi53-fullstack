@@ -11,7 +11,7 @@ import { useHashRoute } from '../composables/useHashRoute';
   const editMode = props.poll !== null;
   const pollDisabled = props.poll?.is_draft === 0;
   const { fetchApi } = useFetchApi();
-  const emit = defineEmits('formsubmitted');
+  const emit = defineEmits('godashboard');
 
   console.log(props.poll)
 
@@ -127,7 +127,7 @@ import { useHashRoute } from '../composables/useHashRoute';
 
         try {
             const poll = await fetchApi({ url: url, method: method, data: form.value });
-            emit('formsubmitted', poll);
+            emit('godashboard');
         } catch (error) {
             console.error(error);
         } finally {

@@ -10,7 +10,7 @@ import PollStatusBadge from './PollStatusBadge.vue';
     await deletePoll(id);
   }
 
-  const emit = defineEmits('editpoll');
+  const emit = defineEmits('editpoll', 'polldetails');
 
   const dateLocale = 'fr-CH';
   const dateOptions = {

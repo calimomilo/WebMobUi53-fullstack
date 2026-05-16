@@ -21,8 +21,7 @@ import PollForm from '../components/PollForm.vue';
 <template>
     <div class="flex gap-3 align-items-center mb-2">
         <a href="#dashboard" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 cursor-pointer">← Retour</a>
-        <h1 class="text-2xl font-bold dark:text-white">Modifier le sondage</h1>
+        <h1 class="text-2xl font-bold dark:text-white">Détails du poll {{ poll.id }}</h1>
     </div>
 
-  <PollForm :poll="poll" @godashboard="emit('godashboard')"/>
 </template>
