@@ -78,7 +78,7 @@ class ApiPollController extends Controller
      */
     public function update(Request $request, int $id)
     {
-         $poll = Poll::find($id);
+        $poll = Poll::find($id);
 
         if (!$poll) {
             return response()->json(['message' => 'Poll not found.'], 404);
@@ -124,6 +124,31 @@ class ApiPollController extends Controller
 
         return $poll;
 
+    }
+
+    /**
+     * Close the specified poll.
+     */
+    public function close(Request $request, int $id)
+    {
+        $poll = Poll::find($id);
+
+        if (!$poll) {
+            return response()->json(['message' => 'Poll not found.'], 404);
+        }
+
+        if ($poll->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized.'], 403);
+        }
+
+        if ($poll->ends_at) {
+            return response()->json(['message' => 'Conflict : End date already set.'], 409);
+        }
+
+        $poll->ends_at = now();
+        $poll->save();
+
+        return $poll;
     }
 
     /**

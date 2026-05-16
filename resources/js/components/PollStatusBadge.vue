@@ -1,16 +1,16 @@
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 const props = defineProps({
     poll: { type: Object, default: null }
   });
 
-  const pollStatus = ref();
-  pollStatus.value = props.poll.is_draft
+  const pollStatus = computed(() =>
+  props.poll.is_draft
   ? 'Brouillon'
   : Date.parse(props.poll.ends_at) < Date.now()
   ? 'Terminé'
-  : 'En cours';
+  : 'En cours');
 
 </script>
 
