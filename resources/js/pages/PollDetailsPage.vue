@@ -46,7 +46,7 @@ import { ref } from 'vue';
         </ul>
         <div v-if="isOwner" class="flex gap-3 items-center">
             <p>Actions :</p>
-            <button class="px-3 py-1 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 cursor-pointer" @click="copyLink">{{ showCopied? 'Lien copié !' : 'Partager le lien' }}</button>
+            <button class="px-3 py-1 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 cursor-pointer" @click="copyLink">{{ showCopied? '✓  Lien copié !' : 'Partager le lien' }}</button>
             <button v-if="!poll.ends_at" class="px-3 py-1 rounded-md bg-red-600 dark:bg-red-800 text-white hover:bg-red-700 dark:hover:bg-red-900 cursor-pointer">Terminer</button>
         </div>
     </div>
