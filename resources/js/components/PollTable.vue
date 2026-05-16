@@ -12,6 +12,16 @@ import PollStatusBadge from './PollStatusBadge.vue';
 
   const emit = defineEmits('editpoll');
 
+  const dateLocale = 'fr-CH';
+  const dateOptions = {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+  };
+
   onMounted(() => {
     const { updatePolls } = usePollStore();
     updatePolls();
@@ -46,8 +56,8 @@ import PollStatusBadge from './PollStatusBadge.vue';
         <td class="border px-3 py-2">
           <PollStatusBadge :poll="poll"></PollStatusBadge>
         </td>
-        <td class="border px-3 py-2">{{ poll.started_at || '-' }}</td>
-        <td class="border px-3 py-2">{{ poll.ends_at || '-' }}</td>
+        <td class="border px-3 py-2">{{ poll.started_at? new Date(poll.started_at).toLocaleString(dateLocale, dateOptions) : '-' }}</td>
+        <td class="border px-3 py-2">{{ poll.ends_at? new Date(poll.ends_at).toLocaleString(dateLocale, dateOptions) : '-' }}</td>
       </tr>
     </tbody>
   </table>
