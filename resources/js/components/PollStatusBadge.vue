@@ -1,16 +1,22 @@
 <script setup>
 import { computed, ref } from 'vue';
+import { usePolling } from '../composables/usePolling';
 
 const props = defineProps({
     poll: { type: Object, default: null }
   });
+  
+  const dateNow = ref(Date.now());
 
   const pollStatus = computed(() =>
   props.poll.is_draft
   ? 'Brouillon'
-  : Date.parse(props.poll.ends_at) < Date.now()
+  : Date.parse(props.poll.ends_at) < dateNow.value
   ? 'Terminé'
   : 'En cours');
+
+  usePolling(() => dateNow.value = Date.now());
+
 
 </script>
 
