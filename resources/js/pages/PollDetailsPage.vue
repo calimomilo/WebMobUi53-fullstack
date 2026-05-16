@@ -6,6 +6,7 @@
     import PollStatusBadge from '../components/PollStatusBadge.vue';
     import { useDateFormatting } from '../composables/useDateFormatting';
 import { ref } from 'vue';
+import { useFetchApi } from '../composables/useFetchApi';
 
     const props = defineProps({
         poll: { type: Object, default: null },
@@ -17,9 +18,12 @@ import { ref } from 'vue';
     const { toFormattedDate } = useDateFormatting();
 
     const emit = defineEmits('godashboard');
-    const poll = props.poll;
+    const poll = ref(props.poll);
     const isOwner = props.isOwner;
+
     const showCopied = ref(false);
+    const { fetchApi } = useFetchApi();
+    const loading = ref(false);
 
     async function copyLink() {
         const link = window.location.href;
@@ -27,6 +31,18 @@ import { ref } from 'vue';
         await navigator.clipboard.writeText(link);
         showCopied.value = true;
         setTimeout(() => showCopied.value = false, 3000);
+    }
+
+    async function closePoll() {
+        loading.value = true;
+
+        try {
+            poll.value = await fetchApi({ url: `/polls/${poll.value.id}/close`, method: 'PUT' });
+        } catch (error) {
+            console.error(error);
+        } finally {
+            loading.value = false;
+        }
     }
 
 </script>
@@ -48,7 +64,7 @@ import { ref } from 'vue';
             <div v-if="isOwner" class="flex gap-3 items-center">
                 <p>Actions :</p>
                 <button class="px-3 py-1 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 cursor-pointer" @click="copyLink">{{ showCopied? '✓  Lien copié !' : 'Partager le lien' }}</button>
-                <button v-if="!poll.ends_at" class="px-3 py-1 rounded-md bg-red-600 dark:bg-red-800 text-white hover:bg-red-700 dark:hover:bg-red-900 cursor-pointer">Terminer</button>
+                <button v-if="!poll.ends_at" class="px-3 py-1 rounded-md bg-red-600 dark:bg-red-800 text-white hover:bg-red-700 dark:hover:bg-red-900 cursor-pointer" @click="closePoll">Terminer</button>
             </div>
         </div>
     </article>
