@@ -7,24 +7,22 @@
     import { useDateFormatting } from '../composables/useDateFormatting';
 
     const props = defineProps({
-        pollId: { type: Number, default: null }
+        poll: { type: Object, default: null },
+        isAuthenticated: { type: Boolean, default: null },
+        isOwner: { type: Boolean, default: null },
+        votedIds: { type: Array, default: null },
+        loginUrl: { type: String, default: null },
     })
-
     const { toFormattedDate } = useDateFormatting();
 
     const emit = defineEmits('godashboard');
-    const { polls } = usePollStore();
-    const poll = polls.value.find(p => p.secret_token == props.pollId);
-    
-    if(!poll) {
-        emit('godashboard');
-    }
+    const poll = props.poll;
 
 </script>
 
 <template>
     <div class="flex gap-3 align-items-center mb-2">
-        <a href="#dashboard" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 cursor-pointer">← Retour</a>
+        <a v-if="props.isOwner" href="/polls#dashboard" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 cursor-pointer">← Retour</a>
         <h1 class="text-2xl font-bold dark:text-white">{{ poll.title ?? poll.question }}</h1>
     </div>
     <div class="p-6">

@@ -1,4 +1,6 @@
 <script setup>
+import PollDetailsPage from './pages/PollDetailsPage.vue';
+
 
     const props = defineProps({
         poll: { type: Object, default: null },
@@ -11,5 +13,6 @@
 </script>
 
 <template>
-    
+    <PollDetailsPage :poll="props.poll" :is-authenticated="props
+    .isAuthenticated" :is-owner="props.isOwner" :voted-ids="props.votedIds" :login-url="props.loginUrl"></PollDetailsPage>    
 </template>

@@ -24,9 +24,13 @@ import PollDetailsPage from './pages/PollDetailsPage.vue';
 
   const { currentComponent, currentHashs, currentRoute, navigateTo } = useHashRoute(routes);
 
+  function navigateToDetail(pollToken) {
+    window.location.assign(`/polls/vote/${pollToken}`);
+  }
+
 </script>
 
 <template>
   <component :is="currentComponent" :pollId="currentHashs[1]" 
-  @godashboard="navigateTo('#dashboard')" @editpoll="pollId => navigateTo(`#edit/${pollId}`)" @polldetails="pollToken => navigateTo(`/vote/${pollToken}`)"></component>
+  @godashboard="navigateTo('#dashboard')" @editpoll="pollId => navigateTo(`#edit/${pollId}`)" @polldetails="pollToken => navigateToDetail(pollToken)"></component>
 </template>
