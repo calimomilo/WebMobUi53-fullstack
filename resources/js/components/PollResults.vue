@@ -33,6 +33,7 @@ const chartOptions = {
     scales: {
         x: {
             ticks: { precision: 0 },
+            grace: '30%'
         },
     },
 }
