@@ -19,7 +19,7 @@ const props = defineProps({
   const dateNow = ref(Date.now());
 
   const canVote = computed(() => {
-    return Date.parse(poll.value.ends_at) > dateNow.value && (poll.value.allow_vote_change || votedOptions.value.length === 0);
+    return (!poll.value.ends_at || Date.parse(poll.value.ends_at) > dateNow.value) && (poll.value.allow_vote_change || votedOptions.value.length === 0);
   });
 
   const message = computed(() => {
