@@ -11,7 +11,7 @@ const props = defineProps({
 
 // additional verification in case user managed to access without being allowed
 const canSeeResults = !!props.poll.options[0].votes_count;
-const chartHeight = computed(() => props.poll.options.length * 48 + 50)
+const chartHeight = computed(() => `height: ${props.poll.options.length * 48 + 50}px`)
 console.log(chartHeight.value)
 
 const chartData = computed(() => ({
@@ -38,15 +38,14 @@ const chartOptions = {
 }
 
 
-  
-
 </script>
 
 <template>
     <h2 class="text-lg mb-1 pt-4 mt-8 border-t-2 border-gray-200">{{ props.poll.question }} : résultats</h2>
-    <div :class="`w-full p-4 h-[${chartHeight}px]`">
-        <Bar :data="chartData" :options="chartOptions" />
+    <div :style="chartHeight">
+        <div class="relative w-full h-full p-4">
+            <Bar :data="chartData" :options="chartOptions" />
+        </div>
     </div>
-
     
 </template>
