@@ -8,7 +8,7 @@
     import { ref } from 'vue';
     import { useFetchApi } from '../composables/useFetchApi';
     import SingleChoiceVote from '../components/PollVotes.vue';
-import PollResults from '../components/PollResults.vue';
+    import PollResults from '../components/PollResults.vue';
 
     const props = defineProps({
         poll: { type: Object, default: null },
