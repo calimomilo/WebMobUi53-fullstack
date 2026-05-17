@@ -7,7 +7,7 @@
     import { useDateFormatting } from '../composables/useDateFormatting';
     import { ref } from 'vue';
     import { useFetchApi } from '../composables/useFetchApi';
-    import SingleChoiceVote from '../components/SingleChoiceVote.vue';
+    import SingleChoiceVote from '../components/PollVotes.vue';
 
     const props = defineProps({
         poll: { type: Object, default: null },
@@ -69,7 +69,7 @@
                 <button v-if="isOwner && !poll.ends_at" class="px-3 py-1 rounded-md bg-red-600 dark:bg-red-800 text-white hover:bg-red-700 dark:hover:bg-red-900 cursor-pointer" @click="closePoll">Terminer</button>
             </div>
         </div>
-        <SingleChoiceVote v-if="!poll.allow_multiple_choices" :poll="poll" :votedIds="props.votedIds" :isAuthenticated="props.isAuthenticated"></SingleChoiceVote>
+        <SingleChoiceVote :poll="poll" :votedIds="props.votedIds" :isAuthenticated="props.isAuthenticated"></SingleChoiceVote>
     </article>
 
 </template>

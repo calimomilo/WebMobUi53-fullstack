@@ -206,7 +206,7 @@ class ApiPollController extends Controller
         // check votes validity
 
         $validated = $request->validate([
-            'votes' => 'required|array',
+            'votes' => 'array',
             'votes.*.poll_id' => 'integer|exists:polls,id',
             'votes.*.id' => 'integer|exists:poll_options,id'
         ]);
@@ -223,7 +223,7 @@ class ApiPollController extends Controller
 
         // check votes unicity
 
-        if (count($votes) > 1 && $poll->allow_multiple_choices) {
+        if (count($votes) > 1 && !$poll->allow_multiple_choices) {
             return response()->json(['message' => 'Only one vote allowed.'], 409);
         }
 

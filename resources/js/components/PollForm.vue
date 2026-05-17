@@ -239,7 +239,7 @@ import { useHashRoute } from '../composables/useHashRoute';
                 <button @click="saveDraft" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md"
                 :class="{ 'hover:bg-gray-300 dark:hover:bg-gray-600 cursor-pointer' : !pollDisabled }" :disabled="loading || pollDisabled">Enregistrer le Brouillon</button>
                 <button @click="publishPoll" class="px-4 py-2 bg-teal-600 dark:bg-purple-900 text-white rounded-md"
-                :class="{ 'hover:bg-teal-300 dark:hover:bg-teal-600 cursor-pointer' : !pollDisabled }" :disabled="loading || pollDisabled">Publier le formulaire</button>
+                :class="{ 'hover:bg-teal-700 dark:hover:bg-purple-800 cursor-pointer' : !pollDisabled }" :disabled="loading || pollDisabled">Publier le formulaire</button>
             </div>
         </form>
     </article>
