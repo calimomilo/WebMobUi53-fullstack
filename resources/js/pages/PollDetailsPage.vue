@@ -7,7 +7,9 @@
     import { useDateFormatting } from '../composables/useDateFormatting';
     import { ref } from 'vue';
     import { useFetchApi } from '../composables/useFetchApi';
-    import SingleChoiceVote from '../components/PollVotes.vue';
+    import PollVotes from '../components/PollVotes.vue';
+    import PollResults from '../components/PollResults.vue';
+    import { usePolling } from '../composables/usePolling';
 
     const props = defineProps({
         poll: { type: Object, default: null },
@@ -26,6 +28,7 @@
     const showCopied = ref(false);
     const { fetchApi } = useFetchApi();
     const loading = ref(false);
+    const showResults = ref(false);
 
     async function copyLink() {
         const link = window.location.href;
@@ -47,6 +50,14 @@
         }
     }
 
+    usePolling(async () => {
+        try {
+            poll.value = await fetchApi({url: `/polls/${poll.value.secret_token}`, method: 'GET'});
+        } catch (error) {
+            console.error(error);
+        }
+    })
+
 </script>
 
 <template>
@@ -65,11 +76,14 @@
             </ul>
             <div v-if="isOwner || resultsArePublic" class="flex gap-3 items-center">
                 <button v-if="isOwner" class="px-3 py-1 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 cursor-pointer" @click="copyLink">{{ showCopied? '✓  Lien copié !' : 'Partager le lien' }}</button>
-                <button v-if="isOwner || resultsArePublic" class="px-3 py-1 rounded-md bg-teal-600 dark:bg-purple-900 text-white hover:bg-teal-700 dark:hover:bg-purple-800 cursor-pointer" @click="seeResults">Voir les résultats</button>
+
+                <button v-if="isOwner || resultsArePublic" class="px-3 py-1 rounded-md bg-teal-600 dark:bg-purple-900 text-white hover:bg-teal-700 dark:hover:bg-purple-800 cursor-pointer" @click="showResults = !showResults">{{ showResults? 'Fermer' : 'Voir' }} les résultats</button>
+
                 <button v-if="isOwner && !poll.ends_at" class="px-3 py-1 rounded-md bg-red-600 dark:bg-red-800 text-white hover:bg-red-700 dark:hover:bg-red-900 cursor-pointer" @click="closePoll">Terminer</button>
             </div>
         </div>
-        <SingleChoiceVote :poll="poll" :votedIds="props.votedIds" :isAuthenticated="props.isAuthenticated"></SingleChoiceVote>
+        <PollVotes :poll="poll" :votedIds="props.votedIds" :isAuthenticated="props.isAuthenticated"></PollVotes>
+        <PollResults v-if="showResults" :poll="poll"></PollResults>
     </article>
 
 </template>
