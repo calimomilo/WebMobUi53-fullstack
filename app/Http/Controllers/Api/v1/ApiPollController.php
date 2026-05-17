@@ -207,11 +207,11 @@ class ApiPollController extends Controller
 
         $validated = $request->validate([
             'votes' => 'required|array',
-            'votes.*.poll_id' => 'required|int|exists:polls,id',
-            'votes.*.id' => 'required|integer|exists:poll_options,id'
+            'votes.*.poll_id' => 'integer|exists:polls,id',
+            'votes.*.id' => 'integer|exists:poll_options,id'
         ]);
 
-        $votes = $validated['votes'];
+        $votes = $validated['votes'] ?? [];
 
         // check votes belong to poll
 
