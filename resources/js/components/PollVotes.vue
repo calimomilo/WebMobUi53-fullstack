@@ -13,13 +13,17 @@ const props = defineProps({
 
   const selectedOptions = ref(votedOptions.value);
   const { fetchApi } = useFetchApi();
+  const errors = ref({});
+  const loading = ref(false);
 
   const canVote = computed(() => {
     return Date.parse(poll.value.ends_at) > Date.now() && (poll.value.allow_vote_change || votedOptions.value.length === 0);
   });
 
   const message = computed(() => {
-    if (Date.parse(poll.value.ends_at) < Date.now()) {
+    if (poll.value.is_draft) {
+        return 'Le sondage n\'est pas encore publié.';
+    } else if (Date.parse(poll.value.ends_at) < Date.now()) {
         return 'Le sondage est terminé.';
     } else if (!props.isAuthenticated) {
         return 'Connectez-vous pour voter.';
@@ -55,23 +59,42 @@ const props = defineProps({
     }
   }
 
-  async function vote() {
-    if (votedOptions.value.length === 0 && selectedOptions.value.length === 0) {
-        
+  function validateVote() {
+    errors.value = {};
+    if (poll.value.is_draft) {
+        errors.value.votes = 'Le sondage n\'est pas encore publié.';
+    } else if (Date.parse(poll.value.ends_at) < Date.now()) {
+        errors.value.votes = 'Le sondage est terminé.';
+    } else if (!props.isAuthenticated) {
+        errors.value.votes = 'Connectez-vous pour voter.';
+    } else if (!poll.value.allow_vote_change && votedOptions.value.length !== 0) {
+        errors.value.votes = 'Vous ne pouvez voter qu\'une seule fois.';
+    } else if (votedOptions.value.length === 0 && selectedOptions.value.length === 0) {
+        errors.value.votes = 'Au moins une option doit être sélectionnée.';
+    } else if (!poll.value.allow_multiple_choices && selectedOptions.value.length > 1) {
+        errors.value.votes = 'Vous ne pouvez sélectionner qu\'une seule option.';
     }
-    console.log(selectedOptions.value)
 
-    try {
-        const data = {
-            votes: selectedOptions.value
+    return Object.keys(errors.value).length === 0;
+  }
+
+  async function vote() {
+    if (validateVote()) {
+        loading.value = true;
+        try {
+            const data = {
+                votes: selectedOptions.value
+            }
+            const result = await fetchApi({url: `/polls/${poll.value.id}/vote`, method: 'POST', data: data});
+            if (result) {
+                poll.value = result;
+                votedOptions.value = selectedOptions.value
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            loading.value = false;
         }
-        const result = await fetchApi({url: `/polls/${poll.value.id}/vote`, method: 'POST', data: data});
-        if (result) {
-            poll.value = result;
-            votedOptions.value = selectedOptions.value
-        }
-    } catch (error) {
-        console.error(error);
     }
   }
 
@@ -90,6 +113,7 @@ const props = defineProps({
             <p>{{ option.label }}</p>
             <p v-if="votedOptions.includes(option)">🗸</p>
         </div>
+        <p v-if="errors.votes" class="mt-1 text-sm text-red-600 dark:text-red-400">{{ errors.votes }}</p>
         <button class="px-4 py-2 mt-2 bg-teal-600 dark:bg-purple-900 text-white rounded-md"    
             :class="{ 'hover:bg-teal-700 dark:hover:bg-purple-800 cursor-pointer' : canVote,
             'opacity-40': !canVote }" :disabled="!canVote" @click="vote">
