@@ -62,13 +62,13 @@ const props = defineProps({
   function select(option) {
     if (canVote.value) {
         if (poll.value.allow_multiple_choices) {
-            if (selectedOptions.value.includes(option)) {
+            if (includesOption(selectedOptions.value, option)) {
                 selectedOptions.value = selectedOptions.value.filter(o => o !== option);
             } else {
                 selectedOptions.value = [...selectedOptions.value, option];
             }
         } else {
-            selectedOptions.value = selectedOptions.value.includes(option) ? [] : [option];
+            selectedOptions.value = includesOption(selectedOptions.value, option) ? [] : [option];
         }
     }
   }
