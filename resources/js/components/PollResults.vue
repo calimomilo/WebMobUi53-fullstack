@@ -43,7 +43,7 @@ const chartOptions = {
 </script>
 
 <template>
-    <h2 class="text-lg mb-1">{{ props.poll.question }} : résultats</h2>
+    <h2 class="text-lg mb-1 pt-4 mt-8 border-t-2 border-gray-200">{{ props.poll.question }} : résultats</h2>
     <div :class="`w-full p-4 h-[${chartHeight}px]`">
         <Bar :data="chartData" :options="chartOptions" />
     </div>

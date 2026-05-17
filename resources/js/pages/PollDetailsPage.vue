@@ -7,8 +7,9 @@
     import { useDateFormatting } from '../composables/useDateFormatting';
     import { ref } from 'vue';
     import { useFetchApi } from '../composables/useFetchApi';
-    import SingleChoiceVote from '../components/PollVotes.vue';
+    import PollVotes from '../components/PollVotes.vue';
     import PollResults from '../components/PollResults.vue';
+    import { usePolling } from '../composables/usePolling';
 
     const props = defineProps({
         poll: { type: Object, default: null },
@@ -49,6 +50,13 @@
         }
     }
 
+    usePolling(async () => {
+        try {
+            poll.value = await fetchApi({url: `/polls/${poll.value.secret_token}`, method: 'GET'});
+        } catch (error) {
+            console.error(error);
+        }
+    })
 
 </script>
 
@@ -74,8 +82,8 @@
                 <button v-if="isOwner && !poll.ends_at" class="px-3 py-1 rounded-md bg-red-600 dark:bg-red-800 text-white hover:bg-red-700 dark:hover:bg-red-900 cursor-pointer" @click="closePoll">Terminer</button>
             </div>
         </div>
+        <PollVotes :poll="poll" :votedIds="props.votedIds" :isAuthenticated="props.isAuthenticated"></PollVotes>
         <PollResults v-if="showResults" :poll="poll"></PollResults>
-        <SingleChoiceVote v-else :poll="poll" :votedIds="props.votedIds" :isAuthenticated="props.isAuthenticated"></SingleChoiceVote>
     </article>
 
 </template>
